@@ -1,0 +1,120 @@
+//
+//  AppDelegate.swift
+//  DimMyScreen
+//
+//  Created by Carlos Correa on 10/5/21.
+//
+
+import Cocoa
+import SwiftUI
+
+@main
+class AppDelegate: NSObject, NSApplicationDelegate {
+    // https://medium.com/@acwrightdesign/creating-a-macos-menu-bar-application-using-swiftui-54572a5d5f87
+
+    var window: NSWindow!
+    var popover: NSPopover!
+    var statusBarItem: NSStatusItem!
+    var overlays: Array<NSWindow> = []
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Create the SwiftUI view that provides the window contents.
+        /*
+        var contentView = ContentView()
+        contentView.action = self.onBrightnessUpdate
+
+        let popover = NSPopover()
+        popover.contentSize = NSSize(width: 200, height: 50)
+        popover.behavior = .transient
+        popover.contentViewController = NSHostingController(rootView: contentView)
+        self.popover = popover*/
+/*
+        self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
+        if let button = self.statusBarItem.button {
+             button.image = NSImage(named: "Icon")
+             //button.action = #selector(togglePopover(_:))
+        }*/
+
+        statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
+        if let b = statusBarItem.button {
+            b.image = NSImage(named: "Icon")
+            b.toolTip = "DimMyScreen\nClick to dim screen"
+        }
+
+        // https://stackoverflow.com/questions/39890861/how-to-place-horizontal-slider-in-nsmenu-swift-3-xcode-8
+        let menu = NSMenu()
+        //menu.minimumWidth = 200
+        let menuItem = NSMenuItem()
+        let statusSlider = NSSlider(value: 1, minValue: 0.1, maxValue: 1, target: self, action: #selector(self.onSliderUpdate))
+        // https://stackoverflow.com/questions/39890861/how-to-place-horizontal-slider-in-nsmenu-swift-3-xcode-8
+        statusSlider.setFrameSize(NSSize(width: 160, height: 16))
+        menu.addItem(NSMenuItem(title: "Brightness:", action: nil, keyEquivalent: ""))
+        menuItem.title = "Brightness"
+        menuItem.view = statusSlider
+        menu.addItem(menuItem)
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q"))
+
+        statusBarItem.menu = menu
+
+    }
+
+    @objc func onSliderUpdate(_ sl: NSSlider) {
+        onBrightnessUpdate(sl.doubleValue)
+    }
+
+    func onBrightnessUpdate(_ brightness: Double) {
+        if brightness == 1 {
+            for overlay in self.overlays {
+                overlay.close()
+            }
+            overlays.removeAll()
+        } else {
+            if overlays.count == 0 {
+                for screen in NSScreen.screens {
+                    let o = NSWindow.init(
+                        contentRect: screen.frame,
+                        styleMask: .fullSizeContentView,
+                        backing: .buffered,
+                        defer: false,
+                        screen: screen)
+                    o.isReleasedWhenClosed = false
+                    // https://stackoverflow.com/questions/13221639/nswindow-in-front-of-every-app-and-in-front-of-the-menu-bar-objective-c-mac
+                    o.level = NSWindow.Level.init(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow) + 2))
+                    //o.animationBehavior = .none
+                    o.alphaValue = 1
+                    o.isOpaque = false
+                    o.ignoresMouseEvents = true
+                    o.makeKeyAndOrderFront(Any?.self)
+                    o.collectionBehavior = [
+                        .canJoinAllSpaces,
+                        .fullScreenAuxiliary]
+                    overlays.append(o)
+                }
+            }
+            for o in self.overlays {
+                let alpha = 1 - brightness
+                o.backgroundColor = NSColor.init(
+                    red: 0, green: 0, blue: 0, alpha: CGFloat(alpha))
+            }
+        }
+    }
+
+    @objc func togglePopover(_ sender: AnyObject?) {
+        if let button = self.statusBarItem.button {
+             if self.popover.isShown {
+                  self.popover.performClose(sender)
+             } else {
+                  self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+                self.popover.contentViewController?.view.window?.becomeKey()
+             }
+        }
+    }
+
+    func applicationWillTerminate(_ aNotification: Notification) {
+        // Insert code here to tear down your application
+    }
+
+
+}
+
