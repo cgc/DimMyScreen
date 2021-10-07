@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create the SwiftUI view that provides the window contents.
-        /*
+
         var contentView = ContentView()
         contentView.action = self.onBrightnessUpdate
 
@@ -27,40 +27,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         popover.contentSize = NSSize(width: 200, height: 50)
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: contentView)
-        self.popover = popover*/
-/*
+        self.popover = popover
+
         self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         if let button = self.statusBarItem.button {
              button.image = NSImage(named: "Icon")
-             //button.action = #selector(togglePopover(_:))
-        }*/
-
-        statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        if let b = statusBarItem.button {
-            b.image = NSImage(named: "Icon")
-            b.toolTip = "DimMyScreen\nClick to dim screen"
+             button.action = #selector(togglePopover(_:))
         }
-
-        // https://stackoverflow.com/questions/39890861/how-to-place-horizontal-slider-in-nsmenu-swift-3-xcode-8
-        let menu = NSMenu()
-        //menu.minimumWidth = 200
-        let menuItem = NSMenuItem()
-        let statusSlider = NSSlider(value: 1, minValue: 0.1, maxValue: 1, target: self, action: #selector(self.onSliderUpdate))
-        // https://stackoverflow.com/questions/39890861/how-to-place-horizontal-slider-in-nsmenu-swift-3-xcode-8
-        statusSlider.setFrameSize(NSSize(width: 160, height: 16))
-        menu.addItem(NSMenuItem(title: "Brightness:", action: nil, keyEquivalent: ""))
-        menuItem.title = "Brightness"
-        menuItem.view = statusSlider
-        menu.addItem(menuItem)
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q"))
-
-        statusBarItem.menu = menu
-
-    }
-
-    @objc func onSliderUpdate(_ sl: NSSlider) {
-        onBrightnessUpdate(sl.doubleValue)
     }
 
     func onBrightnessUpdate(_ brightness: Double) {
@@ -81,7 +54,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     o.isReleasedWhenClosed = false
                     // https://stackoverflow.com/questions/13221639/nswindow-in-front-of-every-app-and-in-front-of-the-menu-bar-objective-c-mac
                     o.level = NSWindow.Level.init(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow) + 2))
-                    //o.animationBehavior = .none
                     o.alphaValue = 1
                     o.isOpaque = false
                     o.ignoresMouseEvents = true
@@ -114,7 +86,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
-
 
 }
 

@@ -12,6 +12,9 @@ struct ContentView: View {
     var action: ((Double) -> Void)?
     var body: some View {
         VStack {
+            Text("DimMyScreen").italic()
+            Divider()
+            Text("Brightness \(Int(brightness*100), specifier: "%d")%")
             Slider(
                 value: Binding<Double>(
                     get: {
@@ -24,7 +27,8 @@ struct ContentView: View {
                 ),
                 in: 0...1
             )
-            Text("Brightness \(Int(brightness*100), specifier: "%d")%")
+            Divider()
+            Button("Quit", action: { NSApp.terminate(nil) })
         }.padding()
     }
 }
