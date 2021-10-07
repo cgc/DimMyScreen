@@ -2,7 +2,7 @@
 
 Dim your Mac -- goes below minimum brightness. Made for night owls, by a night owl.
 
-![](media/demo.gif)
+<img src="media/demo.gif" width="250" />
 
 Decided to make this because I couldn't find a simple, Mac-only/-optimized, open-source application.
 
