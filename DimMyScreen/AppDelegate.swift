@@ -59,7 +59,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     o.ignoresMouseEvents = true
                     o.makeKeyAndOrderFront(Any?.self)
                     o.collectionBehavior = [
+                        // This makes expose stay dim
+                        .stationary,
+                        // This means we only need one overlay across all spaces
                         .canJoinAllSpaces,
+                        // This works for full screen apps too; though some visual bugs
+                        // when full screening.
                         .fullScreenAuxiliary]
                     overlays.append(o)
                 }
