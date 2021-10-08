@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         styleMask: .fullSizeContentView,
                         backing: .buffered,
                         defer: false,
-                        screen: screen)
+                        screen: NSScreen.main)
                     o.isReleasedWhenClosed = false
                     // https://stackoverflow.com/questions/13221639/nswindow-in-front-of-every-app-and-in-front-of-the-menu-bar-objective-c-mac
                     o.level = NSWindow.Level.init(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow) + 2))
