@@ -16,27 +16,46 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var popover: NSPopover!
     var statusBarItem: NSStatusItem!
     var overlays: Array<NSWindow> = []
+    var lastBrightness: Double = 0
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create the SwiftUI view that provides the window contents.
 
+        // Make popover
         var contentView = ContentView()
         contentView.action = self.onBrightnessUpdate
-
         let popover = NSPopover()
         popover.contentSize = NSSize(width: 200, height: 50)
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: contentView)
         self.popover = popover
 
+        // Listener to toggle popover
         self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         if let button = self.statusBarItem.button {
              button.image = NSImage(named: "Icon")
              button.action = #selector(togglePopover(_:))
         }
+
+        // Listen to display changes (new screens, new resolutions)
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: NSApplication.shared,
+            queue: OperationQueue.main
+        ) { notification -> Void in
+            let b = self.lastBrightness
+            // HACK handle this in the simplest way: close all windows, then open them back up.
+            self.onBrightnessUpdate(1)
+            self.onBrightnessUpdate(b)
+        }
     }
 
     func onBrightnessUpdate(_ brightness: Double) {
+        if lastBrightness == brightness {
+            return
+        }
+        lastBrightness = brightness
+
         if brightness == 1 {
             for overlay in self.overlays {
                 overlay.close()
