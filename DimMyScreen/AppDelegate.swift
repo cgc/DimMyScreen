@@ -45,6 +45,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ) { notification -> Void in
             let b = self.lastBrightness
             // HACK handle this in the simplest way: close all windows, then open them back up.
+            // While our code below can handle resolution changes, it won't know to
+            // open windows on new screens / close windows from old ones.
+            // Could solve this somewhat easily by keeping a [screen: window] mapping,
+            // but that would require some differencing logic.
             self.onBrightnessUpdate(1)
             self.onBrightnessUpdate(b)
         }
@@ -89,6 +93,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
             for o in self.overlays {
+                // Update overlay resolution
+                // NOTE: Since we just close / recreate overlays, this code isn't
+                // doing anything meaningful in practice.
+                if let s = o.screen {
+                    o.setFrame(s.frame, display: true, animate: false)
+                }
+                // Update color
                 let alpha = 1 - brightness
                 o.backgroundColor = NSColor.init(
                     red: 0, green: 0, blue: 0, alpha: CGFloat(alpha))
