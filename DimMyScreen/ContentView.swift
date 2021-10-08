@@ -25,7 +25,7 @@ struct ContentView: View {
                         action?($0)
                     }
                 ),
-                in: 0...1
+                in: 0.1...1
             )
             Divider()
             Button("Quit", action: { NSApp.terminate(nil) })
