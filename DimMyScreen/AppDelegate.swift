@@ -76,6 +76,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         screen: NSScreen.main)
                     o.isReleasedWhenClosed = false
                     // https://stackoverflow.com/questions/13221639/nswindow-in-front-of-every-app-and-in-front-of-the-menu-bar-objective-c-mac
+                    // Wasn't able to cover the dock after expose, even with assistiveTechHighWindow
+                    // List of levels: https://jameshfisher.com/2020/08/03/what-is-the-order-of-nswindow-levels/
                     o.level = NSWindow.Level.init(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow) + 2))
                     o.alphaValue = 1
                     o.isOpaque = false
